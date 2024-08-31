@@ -261,48 +261,50 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
   });
 } 
 
-
-async function generatePDF() {
-  // Ensure all images are fully loaded
-  const loadImages = () => {
-    const imagePromises = Array.from(document.images).map(img => {
-      return new Promise((resolve, reject) => {
-        if (img.complete) {
-          resolve();
-        } else {
-          img.onload = resolve;
-          img.onerror = reject;
-        }
-      });
-    });
-    return Promise.all(imagePromises);
-  };
-
-  await loadImages();
-
-  // Hide buttons before generating PDF
-  document.querySelectorAll('.print, .retry-button').forEach(button => button.classList.add('hidden'));
-
-  const opt = {
-    margin: [0, 0, 0, 0],  // Reduce margins to zero
-    filename: 'page.pdf',
-    image: { type: 'jpeg', quality: 1.0 },  // Max quality for images
-    html2canvas: { scale: 3, useCORS: true },  // Higher scale for better resolution
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  // Generate the PDF using html2pdf.js
-  const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
-
-  // Convert PDF Blob to base64
+async function convertImageToBase64(imgUrl) {
+  const response = await fetch(imgUrl);
+  const blob = await response.blob();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.readAsDataURL(pdfBlob);
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);  // Return base64 data
+    reader.onloadend = () => resolve(reader.result);
     reader.onerror = reject;
+    reader.readAsDataURL(blob);
   });
 }
 
+async function embedImagesAsBase64(invoice) {
+  for (let i = 0; i < invoice.Items.length; i++) {
+    const imgSrc = invoice.Items[i].ImgUrl;
+    const base64Image = await convertImageToBase64(imgSrc);
+    if (base64Image) {
+      invoice.Items[i].ImgBase64 = base64Image;
+    }
+  }
+}
+
+function updateHTMLWithBase64Images(invoice) {
+  invoice.Items.forEach((item, index) => {
+    const imgElement = document.querySelector(`.img-${index}`);
+    if (imgElement && item.ImgBase64) {
+      imgElement.src = item.ImgBase64;
+    }
+  });
+}
+
+async function generatePDF() {
+  await embedImagesAsBase64(app.invoice);
+  updateHTMLWithBase64Images(app.invoice);
+
+  const opt = {
+    margin: 1,
+    filename: 'page.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  return await html2pdf().from(document.body).set(opt).outputPdf('blob');
+}
 
 async function sendEmails() {
   try {
@@ -340,7 +342,6 @@ async function sendEmails() {
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
   } finally {
-    // Show buttons again after email process
     document.querySelectorAll('.print, .retry-button').forEach(button => button.classList.remove('hidden'));
   }
 }
