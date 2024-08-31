@@ -316,7 +316,7 @@ ready(function() {
                 EarringWeight: 0,
               };
             }
-            groups[karat].totalWeight += item.Weight;
+            groups[karat].totalWeight += item.Balance_Weight;
             groups[karat].totalGoldPrice += item.Spot_Gold;
             groups[karat].totalLabor += item.Total_Labor;
             groups[karat].totalPrice += item.Spot_Gold + item.Total_Labor;
@@ -326,23 +326,23 @@ ready(function() {
             switch (item.Type) {
               case 'Necklace':
                 groups[karat].NecklaceQty += item.Balance_Qty;
-                groups[karat].NecklaceWeight += item.Weight;
+                groups[karat].NecklaceWeight += item.Balance_Weight;
                 break;
               case 'Bracelet':
                 groups[karat].BraceletQty += item.Balance_Qty;
-                groups[karat].BraceletWeight += item.Weight;
+                groups[karat].BraceletWeight += item.Balance_Weight;
                 break;
               case 'Anklet':
                 groups[karat].AnkletQty += item.Balance_Qty;
-                groups[karat].AnkletWeight += item.Weight;
+                groups[karat].AnkletWeight += item.Balance_Weight;
                 break;
               case 'Ring':
                 groups[karat].RingQty += item.Balance_Qty;
-                groups[karat].RingWeight += item.Weight;
+                groups[karat].RingWeight += item.Balance_Weight;
                 break;
               case 'Earring':
                 groups[karat].EarringQty += item.Balance_Qty;
-                groups[karat].EarringWeight += item.Weight;
+                groups[karat].EarringWeight += item.Balance_Weight;
                 break;
               default:
                 break;
@@ -365,7 +365,7 @@ ready(function() {
         return this.invoice.Items.reduce((total, item) => total + item.Balance_Qty, 0);
       },
       grandTotalWeight() {
-        return this.invoice.Items.reduce((total, item) => total + item.Weight, 0);
+        return this.invoice.Items.reduce((total, item) => total + item.Balance_Weight, 0);
       },
       grandTotalGoldPrice() {
         return this.invoice.Items.reduce((total, item) => total + item.Spot_Gold, 0);
@@ -380,31 +380,31 @@ ready(function() {
         return this.invoice.Items.reduce((total, item) => item.Type === 'Necklace' ? total + item.Balance_Qty : total, 0);
       },
       grandTotalNecklaceWeight() {
-        return this.invoice.Items.reduce((total, item) => item.Type === 'Necklace' ? total + item.Weight : total, 0);
+        return this.invoice.Items.reduce((total, item) => item.Type === 'Necklace' ? total + item.Balance_Weight : total, 0);
       },
       grandTotalBraceletQty() {
         return this.invoice.Items.reduce((total, item) => item.Type === 'Bracelet' ? total + item.Balance_Qty : total, 0);
       },
       grandTotalBraceletWeight() {
-        return this.invoice.Items.reduce((total, item) => item.Type === 'Bracelet' ? total + item.Weight : total, 0);
+        return this.invoice.Items.reduce((total, item) => item.Type === 'Bracelet' ? total + item.Balance_Weight : total, 0);
       },
       grandTotalAnkletQty() {
         return this.invoice.Items.reduce((total, item) => item.Type === 'Anklet' ? total + item.Balance_Qty : total, 0);
       },
       grandTotalAnkletWeight() {
-        return this.invoice.Items.reduce((total, item) => item.Type === 'Anklet' ? total + item.Weight : total, 0);
+        return this.invoice.Items.reduce((total, item) => item.Type === 'Anklet' ? total + item.Balance_Weight : total, 0);
       },
       grandTotalRingQty() {
         return this.invoice.Items.reduce((total, item) => item.Type === 'Ring' ? total + item.Balance_Qty : total, 0);
       },
       grandTotalRingWeight() {
-        return this.invoice.Items.reduce((total, item) => item.Type === 'Ring' ? total + item.Weight : total, 0);
+        return this.invoice.Items.reduce((total, item) => item.Type === 'Ring' ? total + item.Balance_Weight : total, 0);
       },
       grandTotalEarringQty() {
         return this.invoice.Items.reduce((total, item) => item.Type === 'Earring' ? total + item.Balance_Qty : total, 0);
       },
       grandTotalEarringWeight() {
-        return this.invoice.Items.reduce((total, item) => item.Type === 'Earring' ? total + item.Weight : total, 0);
+        return this.invoice.Items.reduce((total, item) => item.Type === 'Earring' ? total + item.Balance_Weight : total, 0);
       },
       groupedPayments() {
         if (!Array.isArray(this.invoice.Payments)) {
