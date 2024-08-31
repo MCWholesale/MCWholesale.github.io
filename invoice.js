@@ -264,42 +264,21 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
 
 async function generatePDF() {
   try {
-    // Capture the current state of the page as an image using html2canvas
-    const canvas = await html2canvas(document.body);
+    // **Option 1: Generate PDF from Page Content using html2pdf.js**
+    const opt = {
+      margin: 1,
+      filename: 'page.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-    if (!canvas || typeof canvas.toDataURL !== 'function') {
-      throw new Error('Canvas generation failed or toDataURL is not available.');
-    }
-
-    const imgData = canvas.toDataURL('image/png');
-
-    // Create a PDF document
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Add the captured image to the PDF
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 295; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      doc.addPage();
-      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    const pdfBlob = doc.output('blob');
+    const pdfDoc = await html2pdf().from(document.body).set(opt).outputPdf('blob');
 
     // Convert PDF Blob to base64
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.readAsDataURL(pdfBlob);
+      reader.readAsDataURL(pdfDoc);
       reader.onloadend = () => resolve(reader.result.split(',')[1]);  // Return base64 data
       reader.onerror = reject;
     });
@@ -317,7 +296,9 @@ async function sendEmails() {
     const subject = 'Monaco Chain Wholesale Current Stock';
     const body = 'Here is our current Stock Inventory. If you want to order, please contact us.';
 
-    for (const email of app.invoice.Emails) {
+    const emails = data.invoice.Emails; // Use the invoice emails
+
+    for (const email of emails) {
       const emailData = {
         api_key: apiKey,
         to: [email],
