@@ -261,6 +261,58 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
   });
 } 
 
+
+async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text("This is the content of the page as a PDF.", 10, 10);
+  const pdfBlob = doc.output('blob');
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(pdfBlob);
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);  // Return base64 data
+    reader.onerror = reject;
+  });
+}
+
+async function sendEmails() {
+  try {
+    const base64PDF = await generatePDF();
+    const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
+    const apiKey = 'api-787D65A8AD36455E83AE5260DEE63CFE';
+    const subject = 'Monaco Chain Wholesale Current Stock';
+    const body = 'Here is our current Stock Inventory. If you want to order, please contact us.';
+
+    for (const email of app.invoice.Emails) {
+      const emailData = {
+        api_key: apiKey,
+        to: [email],
+        sender: 'mustafa@oromonaco.com',
+        subject: subject,
+        text_body: body,
+        attachments: [
+          {
+            filename: "page.pdf",
+            fileblob: base64PDF,
+            mimetype: "application/pdf"
+          }
+        ]
+      };
+
+      try {
+        const response = await axios.post(smpt2goApiUrl, emailData, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        console.log(`Email sent to ${email}:`, response.data);
+      } catch (error) {
+        console.error(`Error sending email to ${email}:`, error.response ? error.response.data : error.message);
+      }
+    }
+  } catch (error) {
+    console.error("Error generating PDF or sending emails:", error);
+  }
+}
+
 ready(function() {
   // Update the invoice anytime the document data changes.
   grist.ready();
