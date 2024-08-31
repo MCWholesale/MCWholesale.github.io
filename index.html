@@ -13,7 +13,7 @@
     
     
     <script src="invoice.js?ver=11"></script>
-    <script src="exampleData.js"></script>
+
 
     <link rel="stylesheet" href="invoice.css?ver=17">
   </head>
@@ -95,7 +95,7 @@
             <tr v-for="(item, index) in invoice.Items">
               <td class="img" style="padding:4px;">
                 <img :class="'img-' + index" :style="item.Type === 'Ring' || item.Type === 'Earring' ? 'height: 110px;' : ''" />
-              <td class="number">{{ item.Karat }}</td>
+              <td class="number">{{ item.Metal }}</td>
               <td class="item-t" style="padding:5px;">{{ item.Description }}  <br><br>
                 <small v-if="item.Type === 'Ring'" style="font-size: 12px; font-weight: bold;">
                   {{ item.options }}
