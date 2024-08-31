@@ -263,16 +263,50 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
 
 
 async function generatePDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.text("This is the content of the page as a PDF.", 10, 10);
-  const pdfBlob = doc.output('blob');
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(pdfBlob);
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);  // Return base64 data
-    reader.onerror = reject;
-  });
+  try {
+    // Capture the current state of the page as an image using html2canvas
+    const canvas = await html2canvas(document.body);
+
+    if (!canvas || typeof canvas.toDataURL !== 'function') {
+      throw new Error('Canvas generation failed or toDataURL is not available.');
+    }
+
+    const imgData = canvas.toDataURL('image/png');
+
+    // Create a PDF document
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Add the captured image to the PDF
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 295; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      doc.addPage();
+      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    const pdfBlob = doc.output('blob');
+
+    // Convert PDF Blob to base64
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(pdfBlob);
+      reader.onloadend = () => resolve(reader.result.split(',')[1]);  // Return base64 data
+      reader.onerror = reject;
+    });
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    throw error;
+  }
 }
 
 async function sendEmails() {
