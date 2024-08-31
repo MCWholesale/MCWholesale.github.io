@@ -284,10 +284,10 @@ async function generatePDF() {
   document.querySelectorAll('.print, .retry-button').forEach(button => button.classList.add('hidden'));
 
   const opt = {
-    margin: 1,
+    margin: [0, 0, 0, 0],  // Reduce margins to zero
     filename: 'page.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
+    image: { type: 'jpeg', quality: 1.0 },  // Max quality for images
+    html2canvas: { scale: 3, useCORS: true },  // Higher scale for better resolution
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
