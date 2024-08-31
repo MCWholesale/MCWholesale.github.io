@@ -29,16 +29,7 @@ function addDemo(row) {
       Website: 'Invoicer.Website'
     }
   }
-  if (!row.Client) {
-    row.Client = {
-      Name: 'Client.Name',
-      Street1: 'Client.Street1',
-      Street2: 'Client.Street2',
-      City: 'Client.City',
-      State: '.State',
-      Zip: '.Zip'
-    }
-  }
+
   if (!row.Items) {
     row.Items = [
       {
@@ -304,7 +295,7 @@ ready(function() {
         const desiredOrder = ['10K', '14K', '18K', '21K', '22K'];
         if (Array.isArray(this.invoice.Items)) {
           this.invoice.Items.forEach(item => {
-            const karat = item.Karat + 'K';
+            const karat = item.Metal + 'K';
             if (!groups[karat]) {
               groups[karat] = {
                 totalWeight: 0,
@@ -325,7 +316,7 @@ ready(function() {
                 EarringWeight: 0,
               };
             }
-            groups[karat].totalWeight += item.Balance_Weight;
+            groups[karat].totalWeight += item.Weight;
             groups[karat].totalGoldPrice += item.Spot_Gold;
             groups[karat].totalLabor += item.Total_Labor;
             groups[karat].totalPrice += item.Spot_Gold + item.Total_Labor;
