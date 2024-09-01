@@ -322,7 +322,7 @@ async function sendEmails() {
     }
 
     const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
-    const apiKey = data.key;
+    const apiKey = data.invoice.key;
     const subject = 'Monaco Chain Wholesale Current Stock';
     const body = 'Here is our current Stock Inventory. If you want to order, please contact us.';
 
