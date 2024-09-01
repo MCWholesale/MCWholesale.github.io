@@ -201,7 +201,7 @@ async function updateInvoice(row) {
 
           if (img) {
             img.setAttribute('src', src);
-
+            item.ImgUrl = src;
             // Track image load status
             data.imageLoadStatus[index] = false;
 
