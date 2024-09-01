@@ -290,7 +290,6 @@ function updateHTMLWithBase64Images(invoice) {
     }
   });
 }
-
 async function generatePDF() {
   await embedImagesAsBase64(app.invoice);
   updateHTMLWithBase64Images(app.invoice);
@@ -303,14 +302,27 @@ async function generatePDF() {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  return await html2pdf().from(document.body).set(opt).outputPdf('blob');
+  const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
+
+  // Convert PDF Blob to base64
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(pdfBlob);
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);  // Return base64 data
+    reader.onerror = reject;
+  });
 }
 
 async function sendEmails() {
   try {
     const base64PDF = await generatePDF();
+
+    if (!base64PDF) {
+      throw new Error("Failed to generate the PDF or convert it to base64.");
+    }
+
     const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
-    const apiKey = 'api-787D65A8AD36455E83AE5260DEE63CFE';
+    const apiKey = data.key;
     const subject = 'Monaco Chain Wholesale Current Stock';
     const body = 'Here is our current Stock Inventory. If you want to order, please contact us.';
 
@@ -324,7 +336,7 @@ async function sendEmails() {
         attachments: [
           {
             filename: "page.pdf",
-            fileblob: base64PDF,
+            fileblob: base64PDF,  // Correct base64 encoded PDF fileblob
             mimetype: "application/pdf"
           }
         ]
