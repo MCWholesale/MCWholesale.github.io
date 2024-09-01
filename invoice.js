@@ -264,8 +264,10 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
 
 function getImageUrl(description) {
   const baseUrl = 'https://raw.githubusercontent.com/MCWholesale/MCWholesale.github.io/main/MCWHOLESALE_PHOTOS/';
-  const sanitizedDescription = description.replace(/\s+/g, '_').toLowerCase();
-  return `${baseUrl}${sanitizedDescription}.png`;
+  
+  const encodedDescription = encodeURIComponent(description);
+  
+  return `${baseUrl}${encodedDescription}`;
 }
 
 async function embedImagesAsBase64(invoice) {
