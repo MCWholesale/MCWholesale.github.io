@@ -275,9 +275,17 @@ async function convertImageToBase64(imgUrl) {
 async function embedImagesAsBase64(invoice) {
   for (let i = 0; i < invoice.Items.length; i++) {
     const imgSrc = invoice.Items[i].ImgUrl;
+
+    if (!imgSrc) {
+      console.error(`Image URL is missing for item at index ${i}`);
+      continue; // Skip if imgSrc is undefined
+    }
+
     const base64Image = await convertImageToBase64(imgSrc);
     if (base64Image) {
       invoice.Items[i].ImgBase64 = base64Image;
+    } else {
+      console.error(`Failed to convert image to Base64 for item at index ${i}`);
     }
   }
 }
@@ -291,8 +299,15 @@ function updateHTMLWithBase64Images(invoice) {
   });
 }
 async function generatePDF() {
-  await embedImagesAsBase64(app.invoice);
-  updateHTMLWithBase64Images(app.invoice);
+  await embedImagesAsBase64(data.invoice);
+
+  // Ensure all images have been correctly embedded
+  if (Object.values(data.invoice.Items).some(item => !item.ImgBase64)) {
+    console.error("Not all images were converted to Base64. PDF generation might be incomplete.");
+    return;
+  }
+
+  updateHTMLWithBase64Images(data.invoice);
 
   const opt = {
     margin: 1,
@@ -312,7 +327,6 @@ async function generatePDF() {
     reader.onerror = reject;
   });
 }
-
 async function sendEmails() {
   try {
     const base64PDF = await generatePDF();
