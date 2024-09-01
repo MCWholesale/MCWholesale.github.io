@@ -261,8 +261,31 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
   });
 } 
 
+
+function getImageUrl(description) {
+  const baseUrl = 'https://raw.githubusercontent.com/MCWholesale/MCWholesale.github.io/main/MCWHOLESALE_PHOTOS/';
+  const sanitizedDescription = description.replace(/\s+/g, '_').toLowerCase();
+  return `${baseUrl}${sanitizedDescription}.png`;
+}
+
+async function embedImagesAsBase64(invoice) {
+  for (let i = 0; i < invoice.Items.length; i++) {
+    const imgUrl = getImageUrl(invoice.Items[i].Description);
+    try {
+      const base64Image = await convertImageToBase64(imgUrl);
+      if (base64Image) {
+        invoice.Items[i].ImgBase64 = base64Image;
+      } else {
+        console.log(`Image not found for item at index ${i}: ${imgUrl}`);
+      }
+    } catch (error) {
+      console.log(`Error fetching image for item at index ${i}: ${error.message}`);
+    }
+  }
+}
+
 async function convertImageToBase64(imgUrl) {
-  const response = await fetch(imgUrl);
+  const response = await fetch(imgUrl, { mode: 'cors' });
   const blob = await response.blob();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -270,24 +293,6 @@ async function convertImageToBase64(imgUrl) {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
-}
-
-async function embedImagesAsBase64(invoice) {
-  for (let i = 0; i < invoice.Items.length; i++) {
-    const imgSrc = invoice.Items[i].ImgUrl;
-
-    if (!imgSrc) {
-      console.error(`Image URL is missing for item at index ${i}`);
-      continue; // Skip if imgSrc is undefined
-    }
-
-    const base64Image = await convertImageToBase64(imgSrc);
-    if (base64Image) {
-      invoice.Items[i].ImgBase64 = base64Image;
-    } else {
-      console.error(`Failed to convert image to Base64 for item at index ${i}`);
-    }
-  }
 }
 
 function updateHTMLWithBase64Images(invoice) {
@@ -298,16 +303,10 @@ function updateHTMLWithBase64Images(invoice) {
     }
   });
 }
+
 async function generatePDF() {
-  await embedImagesAsBase64(data.invoice);
-
-  // Ensure all images have been correctly embedded
-  if (Object.values(data.invoice.Items).some(item => !item.ImgBase64)) {
-    console.error("Not all images were converted to Base64. PDF generation might be incomplete.");
-    return;
-  }
-
-  updateHTMLWithBase64Images(data.invoice);
+  await embedImagesAsBase64(data.invoice);  // Convert images to Base64
+  updateHTMLWithBase64Images(data.invoice);  // Embed images in the HTML
 
   const opt = {
     margin: 1,
@@ -327,6 +326,8 @@ async function generatePDF() {
     reader.onerror = reject;
   });
 }
+
+
 async function sendEmails() {
   try {
     const base64PDF = await generatePDF();
