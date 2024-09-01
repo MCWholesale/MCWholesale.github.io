@@ -269,7 +269,7 @@ function getImageUrl(description) {
 
   encodedDescription = encodedDescription.replace(/%C3%A9/g, 'e%CC%81');
 
-  return `${baseUrl}${encodedDescription}`;
+  return `${baseUrl}${encodedDescription}.png`;
 }
 
 async function embedImagesAsBase64(invoice) {
