@@ -478,3 +478,19 @@ tfoot td {
 .item-page {
   page-break-after: always;
 }
+
+
+
+
+table, tr, td, th {
+  page-break-inside: avoid !important;
+}
+
+.page-break {
+  page-break-before: always;
+}
+
+.html2pdf__page-break {
+  display: block;
+  page-break-before: always;
+}

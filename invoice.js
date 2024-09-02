@@ -319,10 +319,10 @@ async function generatePDF() {
   updateHTMLWithBase64Images(data.invoice);  // Embed images in the HTML
 
   const opt = {
-    margin: 1,
-    filename: 'page.pdf',
-    image: { type: 'jpeg', quality: 0.80 },  // Compress images to reduce size
-    html2canvas: { scale: 1.5 },  // Reduce the scale to reduce resolution and size
+    margin: [10, 10, 10, 10], // Adjust margins to fit content better
+    filename: 'stock.pdf',
+    image: { type: 'jpeg', quality: 0.80 },
+    html2canvas: { scale: 2, useCORS: true, logging: true }, // Enhanced scale for better quality
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
