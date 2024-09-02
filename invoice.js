@@ -342,11 +342,11 @@ async function generatePDF() {
 async function sendEmails() {
   try {
     const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
     const totalEmails = data.invoice.Emails.length;
     let sentEmails = 0;
 
-    progressText.textContent = `Email sending 0/${totalEmails}`;
+    progressBar.setAttribute('data-label', `Email sending 0/${totalEmails}`);
+    progressBar.value = 0;
 
     const base64PDF = await generatePDF();
 
@@ -382,7 +382,7 @@ async function sendEmails() {
         console.log(`Email sent to ${email}:`, response.data);
         sentEmails++;
         progressBar.value = (sentEmails / totalEmails) * 100;
-        progressText.textContent = `Email sending ${sentEmails}/${totalEmails}`;
+        progressBar.setAttribute('data-label', `Email sending ${sentEmails}/${totalEmails}`);
       } catch (error) {
         console.error(`Error sending email to ${email}:`, error.response ? error.response.data : error.message);
       }
@@ -390,7 +390,7 @@ async function sendEmails() {
 
     await Promise.all(emailPromises);  // Send all emails in parallel
 
-    progressText.textContent = "COMPLETED";
+    progressBar.setAttribute('data-label', "COMPLETED");
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
   } finally {
