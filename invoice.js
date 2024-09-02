@@ -337,26 +337,6 @@ async function generatePDF() {
   });
 }
 
-async function updateLastSentDate(apiKey, documentId, tableName, recordId, dateValue) {
-  const url = `https://docs.getgrist.com/api/docs/${documentId}/tables/${tableName}/records/${recordId}`;
-  const payload = {
-    "fields": {
-      "Last_Sent": dateValue
-    }
-  };
-
-  try {
-    const response = await axios.patch(url, payload, {
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      }
-    });
-    console.log('Last Sent Date updated successfully:', response.data);
-  } catch (error) {
-    console.error('Error updating Last Sent Date:', error.response ? error.response.data : error.message);
-  }
-}
 
 async function sendEmails() {
   try {
@@ -410,7 +390,14 @@ async function sendEmails() {
     await Promise.all(emailPromises);  // Send all emails in parallel
 
     progressBar.setAttribute('data-label', "COMPLETED");
-    updateLastSentDate(data.invoice.Grist_Api, 'dh3z54ncvx1UwV1ybi6K1F', 'Stock_Balance_Report', data.invoice.record_id, new Date().toISOString());
+
+    // Update the Last_Sent field in Grist
+    const dateValue = new Date().toISOString();
+    await grist.docApi.updateRecord('Stock_Balance_Report', data.invoice.record_id, {
+      Last_Sent: dateValue
+    });
+
+    console.log('Last Sent Date updated successfully');
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
   } finally {
