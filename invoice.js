@@ -313,8 +313,6 @@ function updateHTMLWithBase64Images(invoice) {
 async function generatePDF() {
   // Hide the buttons initially
   // Hide progress-related elements before PDF generation
-  document.getElementById('progress-bar').style.display = 'none';
-  document.getElementById('progress-text').style.display = 'none';
   document.querySelectorAll('.print').forEach(button => button.classList.add('hidden'));
 
   await embedImagesAsBase64(data.invoice);  // Convert images to Base64
