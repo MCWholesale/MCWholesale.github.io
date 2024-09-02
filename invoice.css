@@ -479,7 +479,9 @@ tfoot td {
   page-break-after: always;
 }
 
-
+.tr {
+  page-break-inside: avoid !important;
+}
 
 
 table, tr, td, th {
