@@ -309,6 +309,9 @@ function updateHTMLWithBase64Images(invoice) {
 }
 
 async function generatePDF() {
+  // Hide the buttons initially
+  document.querySelectorAll('.print').forEach(button => button.classList.add('hidden'));
+
   await embedImagesAsBase64(data.invoice);  // Convert images to Base64
   updateHTMLWithBase64Images(data.invoice);  // Embed images in the HTML
 
@@ -334,6 +337,10 @@ async function generatePDF() {
 
 async function sendEmails() {
   try {
+    const progressBar = document.getElementById('progress-bar');
+    const totalEmails = data.invoice.Emails.length;
+    let sentEmails = 0;
+
     const base64PDF = await generatePDF();
 
     if (!base64PDF) {
@@ -366,6 +373,8 @@ async function sendEmails() {
           headers: { 'Content-Type': 'application/json' }
         });
         console.log(`Email sent to ${email}:`, response.data);
+        sentEmails++;
+        progressBar.value = (sentEmails / totalEmails) * 100;  // Update progress bar
       } catch (error) {
         console.error(`Error sending email to ${email}:`, error.response ? error.response.data : error.message);
       }
@@ -373,7 +382,8 @@ async function sendEmails() {
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
   } finally {
-    document.querySelectorAll('.print, .retry-button').forEach(button => button.classList.remove('hidden'));
+    // Show the buttons again
+    document.querySelectorAll('.print').forEach(button => button.classList.remove('hidden'));
   }
 }
 
