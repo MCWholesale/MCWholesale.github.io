@@ -62,7 +62,7 @@
           </div>
           <div class="block">
             <div style="margin-top: 64px;">
-              <div class="info"><span class="meta">CURRENT STOCK INVENTORY</span></div>
+              <div class="info"><span style="font-weight:bold; font-size:20px;">CURRENT STOCK INVENTORY</span></div>
               <div class="info" v-if="invoice.Issued"><div class="meta date-tag">DATE</div>{{ invoice.Date | asDate }}</div>
               <div class="info"><span class="meta">SPOT FIX/OZ</span> {{ invoice.Spot_Fix_Oz  | currency  }}</div>
             </div>
@@ -117,7 +117,7 @@
             </tr>
           </template>
         </table>
-        <div style="border: 1px solid black;display: flex;gap: 12%; padding: 10px; page-break-before: always;">
+        <div style="border: 1px solid black;display: flex;justify-content: space-around;; padding: 10px; page-break-before: always;">
           <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">SPOT FIX OZ</span> <span>{{ invoice.Spot_Fix_Oz | currency }}</span> </div>
           <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">DATE</span><span> {{ invoice.Date | asDateM }}</span></div>
         </div>
