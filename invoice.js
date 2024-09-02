@@ -276,7 +276,7 @@ async function embedImagesAsBase64(invoice) {
   for (let i = 0; i < invoice.Items.length; i++) {
     const imgUrl = getImageUrl(invoice.Items[i].Description);
     try {
-      const base64Image = await convertImageToBase64(imgUrl, 0,7);
+      const base64Image = await convertImageToBase64(imgUrl);
       if (base64Image) {
         invoice.Items[i].ImgBase64 = base64Image;
       } else {
@@ -288,22 +288,14 @@ async function embedImagesAsBase64(invoice) {
   }
 }
 
-async function convertImageToBase64(imgUrl, quality = 0.8) {
+async function convertImageToBase64(imgUrl) {
   const response = await fetch(imgUrl, { mode: 'cors' });
   const blob = await response.blob();
-  const canvas = document.createElement('canvas');
-  const img = new Image();
   return new Promise((resolve, reject) => {
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const base64Image = canvas.toDataURL('image/jpeg', quality);
-      resolve(base64Image);
-    };
-    img.onerror = reject;
-    img.src = URL.createObjectURL(blob);
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
   });
 }
 
@@ -320,6 +312,9 @@ function updateHTMLWithBase64Images(invoice) {
 
 async function generatePDF() {
   // Hide the buttons initially
+  // Hide progress-related elements before PDF generation
+  document.getElementById('progress-bar').style.display = 'none';
+  document.getElementById('progress-text').style.display = 'none';
   document.querySelectorAll('.print').forEach(button => button.classList.add('hidden'));
 
   await embedImagesAsBase64(data.invoice);  // Convert images to Base64
@@ -328,8 +323,8 @@ async function generatePDF() {
   const opt = {
     margin: 1,
     filename: 'page.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
+    image: { type: 'jpeg', quality: 0.80 },  // Compress images to reduce size
+    html2canvas: { scale: 1.5 },  // Reduce the scale to reduce resolution and size
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
@@ -402,6 +397,8 @@ async function sendEmails() {
     document.querySelectorAll('.print').forEach(button => button.classList.remove('hidden'));
   }
 }
+
+
 
 ready(function() {
   // Update the invoice anytime the document data changes.
