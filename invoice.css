@@ -101,6 +101,10 @@ table.items th {
   text-align: left;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .money, .number, .item-t {
   text-align: center;
 }
