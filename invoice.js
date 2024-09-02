@@ -276,7 +276,7 @@ async function embedImagesAsBase64(invoice) {
   for (let i = 0; i < invoice.Items.length; i++) {
     const imgUrl = getImageUrl(invoice.Items[i].Description);
     try {
-      const base64Image = await convertImageToBase64(imgUrl, 0.7);
+      const base64Image = await convertImageToBase64(imgUrl, 0,7);
       if (base64Image) {
         invoice.Items[i].ImgBase64 = base64Image;
       } else {
@@ -307,7 +307,14 @@ async function convertImageToBase64(imgUrl, quality = 0.8) {
   });
 }
 
-
+function updateHTMLWithBase64Images(invoice) {
+  invoice.Items.forEach((item, index) => {
+    const imgElement = document.querySelector(`.img-${index}`);
+    if (imgElement && item.ImgBase64) {
+      imgElement.src = item.ImgBase64;
+    }
+  });
+}
 
 
 
