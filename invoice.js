@@ -276,7 +276,7 @@ async function embedImagesAsBase64(invoice) {
   for (let i = 0; i < invoice.Items.length; i++) {
     const imgUrl = getImageUrl(invoice.Items[i].Description);
     try {
-      const base64Image = await convertImageToBase64(imgUrl);
+      const base64Image = await convertImageToBase64(imgUrl, 0.7);
       if (base64Image) {
         invoice.Items[i].ImgBase64 = base64Image;
       } else {
@@ -288,25 +288,28 @@ async function embedImagesAsBase64(invoice) {
   }
 }
 
-async function convertImageToBase64(imgUrl) {
+async function convertImageToBase64(imgUrl, quality = 0.8) {
   const response = await fetch(imgUrl, { mode: 'cors' });
   const blob = await response.blob();
+  const canvas = document.createElement('canvas');
+  const img = new Image();
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const base64Image = canvas.toDataURL('image/jpeg', quality);
+      resolve(base64Image);
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(blob);
   });
 }
 
-function updateHTMLWithBase64Images(invoice) {
-  invoice.Items.forEach((item, index) => {
-    const imgElement = document.querySelector(`.img-${index}`);
-    if (imgElement && item.ImgBase64) {
-      imgElement.src = item.ImgBase64;
-    }
-  });
-}
+
+
+
 
 async function generatePDF() {
   // Hide the buttons initially
@@ -341,7 +344,7 @@ async function sendEmails() {
     const totalEmails = data.invoice.Emails.length;
     let sentEmails = 0;
 
-    progressText.textContent = `Email sending 0/${totalEmails}`;  // Initialize progress text
+    progressText.textContent = `Email sending 0/${totalEmails}`;
 
     const base64PDF = await generatePDF();
 
@@ -354,7 +357,7 @@ async function sendEmails() {
     const subject = 'Monaco Chain Wholesale Current Stock';
     const body = 'Here is our current Stock Inventory. If you want to order, please contact us.';
 
-    for (const email of data.invoice.Emails) {
+    const emailPromises = data.invoice.Emails.map(async (email) => {
       const emailData = {
         api_key: apiKey,
         to: [email],
@@ -364,7 +367,7 @@ async function sendEmails() {
         attachments: [
           {
             filename: "page.pdf",
-            fileblob: base64PDF,  // Correct base64 encoded PDF fileblob
+            fileblob: base64PDF,
             mimetype: "application/pdf"
           }
         ]
@@ -376,19 +379,19 @@ async function sendEmails() {
         });
         console.log(`Email sent to ${email}:`, response.data);
         sentEmails++;
-        progressBar.value = (sentEmails / totalEmails) * 100;  // Update progress bar
-        progressText.textContent = `Email sending ${sentEmails}/${totalEmails}`;  // Update progress text
+        progressBar.value = (sentEmails / totalEmails) * 100;
+        progressText.textContent = `Email sending ${sentEmails}/${totalEmails}`;
       } catch (error) {
         console.error(`Error sending email to ${email}:`, error.response ? error.response.data : error.message);
       }
-    }
+    });
 
-    // When all emails are sent, show 'COMPLETED'
+    await Promise.all(emailPromises);  // Send all emails in parallel
+
     progressText.textContent = "COMPLETED";
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
   } finally {
-    // Show the buttons again
     document.querySelectorAll('.print').forEach(button => button.classList.remove('hidden'));
   }
 }
