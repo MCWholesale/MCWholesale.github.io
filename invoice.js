@@ -321,7 +321,7 @@ async function generatePDF() {
   const opt = {
   margin: [0.5, 0.5, 0.5, 0.5], // Adjust margins as needed
   filename: 'stock.pdf',
-  image: { type: 'jpeg', quality: 0.80 },
+  image: { type: 'jpeg', quality: 0.75 },
   html2canvas: { 
     scale: 2, 
     useCORS: true, 
@@ -398,7 +398,7 @@ async function sendEmails() {
     progressBar.setAttribute('data-label', "COMPLETED");
 
     // Update the Last_Sent field in Grist using applyUserActions
-    const dateValue = moment().tz('America/New_York').toISOString();
+    const dateValue = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss');
     await grist.docApi.applyUserActions([
       ['UpdateRecord', 'Stock_Balance_Report', data.invoice.record_id, { Last_Sent: dateValue }]
     ]);
