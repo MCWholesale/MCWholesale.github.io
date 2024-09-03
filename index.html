@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
     <script src="invoice.js?ver=11"></script>
 
 
@@ -117,7 +117,7 @@
             </tr>
           </template>
         </table>
-        <div style="border: 1px solid black;display: flex;justify-content: space-around;; padding: 10px;>
+        <div style="border: 1px solid black;display: flex;justify-content: space-around; padding: 10px;">
           <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">SPOT FIX OZ</span> <span>{{ invoice.Spot_Fix_Oz | currency }}</span> </div>
           <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">DATE</span><span> {{ invoice.Date | asDateM }}</span></div>
         </div>
