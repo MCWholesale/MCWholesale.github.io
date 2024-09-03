@@ -475,9 +475,6 @@ tfoot td {
 }
 
 
-.item-page {
-  page-break-after: always;
-}
 
 .tr {
   page-break-inside: avoid !important;
@@ -486,13 +483,4 @@ tfoot td {
 
 table, tr, td, th {
   page-break-inside: avoid !important;
-}
-
-.page-break {
-  page-break-before: always;
-}
-
-.html2pdf__page-break {
-  display: block;
-  page-break-before: always;
 }
