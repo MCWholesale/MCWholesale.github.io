@@ -319,12 +319,18 @@ async function generatePDF() {
   updateHTMLWithBase64Images(data.invoice);  // Embed images in the HTML
 
   const opt = {
-    margin: [10, 10, 10, 10], // Adjust margins to fit content better
-    filename: 'stock.pdf',
-    image: { type: 'jpeg', quality: 0.80 },
-    html2canvas: { scale: 2, useCORS: true, logging: true }, // Enhanced scale for better quality
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
+  margin: [0.5, 0.5, 0.5, 0.5], // Adjust margins as needed
+  filename: 'stock.pdf',
+  image: { type: 'jpeg', quality: 0.80 },
+  html2canvas: { 
+    scale: 2, 
+    useCORS: true, 
+    logging: true, 
+    windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
+    windowHeight: document.body.scrollHeight  // Ensure full-height rendering
+  },
+  jsPDF: { unit: 'px', format: [document.body.scrollWidth, document.body.scrollHeight], orientation: 'portrait' }
+};
 
   const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
 
