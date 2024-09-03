@@ -398,7 +398,7 @@ async function sendEmails() {
     progressBar.setAttribute('data-label', "COMPLETED");
 
     // Update the Last_Sent field in Grist using applyUserActions
-    const dateValue = new Date().toISOString();
+    const dateValue = moment().tz('America/New_York').toISOString();
     await grist.docApi.applyUserActions([
       ['UpdateRecord', 'Stock_Balance_Report', data.invoice.record_id, { Last_Sent: dateValue }]
     ]);
