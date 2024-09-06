@@ -602,7 +602,8 @@ ready(function() {
         });
       },
       getBackgroundColor(metal) {
-        switch (metal) {
+        const metalValue = Number(metal); // Ensure it's a number
+        switch (metalValue) {
           case 10:
             return '#DCDCDC';
           case 14:
