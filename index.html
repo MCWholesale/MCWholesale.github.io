@@ -62,7 +62,7 @@
           </div>
           <div class="block">
             <div style="margin-top: 64px;">
-              <div class="info"><span style="font-weight:bold; font-size:20px;">CURRENT STOCK INVENTORY</span></div>
+              <div class="info"><span style="font-weight:bold; font-size:20px;">CURRENT STOCK</span></div>
             </div>
           </div>
         </div>
@@ -100,7 +100,9 @@
             <tr v-for="(item, index) in invoice.Items">
               <td class="img" style="padding:4px;">
                 <img :class="'img-' + index" :style="item.Type === 'Ring' || item.Type === 'Earring' ? 'height: 110px;' : ''" />
-              <td class="number">{{ item.Metal }}</td>
+                <td class="number" :style="{'background-color': getBackgroundColor(item.Metal)}">
+                  {{ item.Metal }}
+                </td>
               <td class="item-t" style="padding:5px;">{{ item.Description }}  <br><br>
                 <small v-if="item.Type === 'Ring'" style="font-size: 12px; font-weight: bold;">
                   {{ item.options }}
@@ -111,7 +113,7 @@
               <td class="item-t" id="type">{{ item.Type }}</td>
               <td class="number">{{ item.Balance_Qty }}</td>
               <td class="money">{{ item.Balance_Weight }}</td>
-              <td class="money">{{ item.Labor_GR | currency }}</td>
+              <td class="money">{{ item.Sold_Labor_Gr | currency }}</td>
               <td class="money">{{ item.Total_Labor | currency }}</td>
               <td class="money">{{ item.Spot_Gold | currency }}</td>
               <td class="money">{{ item.Spot_Gold_Labor_Duty | currency }}</td>

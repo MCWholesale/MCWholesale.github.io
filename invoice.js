@@ -470,8 +470,8 @@ ready(function() {
             }
             groups[karat].totalWeight += item.Balance_Weight;
             groups[karat].totalGoldPrice += item.Spot_Gold;
-            groups[karat].totalLabor += item.Total_Labor;
-            groups[karat].totalPrice += item.Spot_Gold + item.Total_Labor;
+            groups[karat].totalLabor += item.Sold_Labor_Total;
+            groups[karat].totalPrice += item.Spot_Gold + item.Sold_Labor_Total;
             groups[karat].goldPerGram = groups[karat].totalGoldPrice / groups[karat].totalWeight;
             groups[karat].totalQty += item.Balance_Qty;
 
@@ -523,7 +523,7 @@ ready(function() {
         return this.invoice.Items.reduce((total, item) => total + item.Spot_Gold, 0);
       },
       grandTotalLabor() {
-        return this.invoice.Items.reduce((total, item) => total + item.Total_Labor, 0);
+        return this.invoice.Items.reduce((total, item) => total + item.Sold_Labor_Total, 0);
       },
       grandTotalPrice() {
         return this.invoice.Items.reduce((total, item) => total + item.Spot_Gold_Labor_Duty, 0);
@@ -601,6 +601,22 @@ ready(function() {
           }
         });
       },
+      getBackgroundColor(metal) {
+        switch (metal) {
+          case 10:
+            return '#DCDCDC';
+          case 14:
+            return '#FECBCC';
+          case 18:
+            return '#FEF47A';
+          case 21:
+            return '#928619';
+          case 22:
+            return '#FD9D28';
+          default:
+            return 'transparent'; // Default color if metal value doesn't match
+        }
+      }
     }
   });
 
