@@ -63,14 +63,15 @@
           <div class="block">
             <div style="margin-top: 64px;">
               <div class="info"><span style="font-weight:bold; font-size:20px;">CURRENT STOCK INVENTORY</span></div>
-              <div class="info" v-if="invoice.Issued"><div class="meta date-tag">DATE</div>{{ invoice.Date | asDate }}</div>
-              <div class="info"><span class="meta">SPOT FIX/OZ</span> {{ invoice.Spot_Fix_Oz  | currency  }}</div>
             </div>
           </div>
         </div>
         
 
-
+        <div style="border: 1px solid black;display: flex;justify-content: space-around; padding: 10px;">
+          <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">SPOT FIX OZ</span> <span>{{ invoice.Spot_Fix_Oz | currency }}</span> </div>
+          <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">DATE</span><span> {{ invoice.Date | asDateM }}</span></div>
+        </div>
         <table class="items">
           <template v-if="!Array.isArray(invoice.Items)">
             <tr>
@@ -117,78 +118,8 @@
             </tr>
           </template>
         </table>
-        <div style="border: 1px solid black;display: flex;justify-content: space-around; padding: 10px;">
-          <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">SPOT FIX OZ</span> <span>{{ invoice.Spot_Fix_Oz | currency }}</span> </div>
-          <div style="width: 22%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><span style="font-weight: bold;">DATE</span><span> {{ invoice.Date | asDateM }}</span></div>
-        </div>
 
-<div class="overview-grid" v-for="(overview, index) in Object.entries(groupedItems)" :key="index" :style="{ border: `1px solid ${borderColors[index % borderColors.length]}` }">
-  <div class="overview-item single"  style="font-size: 11px;">
-    <div class="overview-title" style="width: 770px;">SPOT {{ overview[0] }} OVERVIEW</div>
-    <div class="overview-items">WEIGHT (gr) <span>{{ overview[1].totalWeight | round }}</span></div>
-    <div class="overview-items">SPOT GOLD/GR <span>${{ overview[1].goldPerGram | round }}</span></div>
-    <div class="overview-items">SPOT GOLD <span>{{ overview[1].totalGoldPrice | currency }}</span></div>
-    <div class="overview-items">SPOT LABOR <span>{{ overview[1].totalLabor | currency }}</span></div>
-    <div class="overview-items last">SPOT {{ overview[0] }} TOTAL PRICE <span>{{ overview[1].totalPrice | currency }}</span></div>
-  </div>
-  <table class="overview-item single" style="font-size: 14px; margin-top: 1%;">
-    <thead>
-      <tr>
-        <th></th>
-        <th></th>
-        <th style="padding-right: 5px;">QTY</th>
-        <th style="padding-right: 0;">WEIGHT</th>
-      </tr>
-    </thead>
-    <tbody style="line-height: 8.15px;">
-      <tr>
-        <td>Necklaces</td>
-        <td></td>
-        <td>{{ overview[1].NecklaceQty }}</td>
-        <td style="padding-right: 0;">{{ overview[1].NecklaceWeight | round }}</td>
-      </tr>
-      <tr>
-        <td>Bracelets</td>
-        <td></td>
-        <td>{{ overview[1].BraceletQty }}</td>
-        <td style="padding-right: 0;">{{ overview[1].BraceletWeight | round }}</td>
-      </tr>
-      <tr>
-        <td>Anklets</td>
-        <td></td>
-        <td>{{ overview[1].AnkletQty }}</td>
-        <td style="padding-right: 0;">{{ overview[1].AnkletWeight | round }}</td>
-      </tr>
-      <tr>
-        <td>Rings</td>
-        <td></td>
-        <td>{{ overview[1].RingQty }} </td>
-        <td style="padding-right: 0;">{{ overview[1].RingWeight | round }} </td>
-      </tr>
-      <tr>
-        <td>Earrings</td>
-        <td></td>
-        <td>{{ overview[1].EarringQty }}</td>
-        <td style="padding-right: 0;">{{ overview[1].EarringWeight | round }}</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr style="height: 18px;">
-        <td colspan="2" style="padding-left: 0; padding-top: 2px;">TOTAL</td>
-        <td style="padding-right: 8px; padding-top: 2px; padding-left: 8px;">{{ overview[1].totalQty }}</td>
-        <td style="padding-right: 0; padding-top: 2px; padding-left: 8px;">{{ overview[1].totalWeight | round }}</td>
-      </tr>
-    </tfoot>
-  </table>
 </div>
-
-        <div class="overview grand" style="width: 800px;">
-          <div class="overview-title">SPOT GRAND TOTAL</div>
-          <div class="overview-items grand">GRAND TOTAL WEIGHT (gr) <span> {{ grandTotalWeight | round }} </span></div>
-          <div class="overview-items grand">SPOT GRAND TOTAL GOLD <span>{{ grandTotalGoldPrice | currency }} </span></div>
-          <div class="overview-items grand">SPOT GRAND TOTAL LABOR <span>{{ grandTotalLabor | currency }} </span></div>
-          <div class="overview-items grand last">SPOT GRAND TOTAL PRICE <span>{{ grandTotalPrice | currency }} </span></div>
-        </div>
 
       <span style="border-bottom: 1px solid black;display: block;font-weight: bold;margin-top: 5%;">PAYMENT OPTIONS</span>
       <div style="display:flex;margin-top: 15px;flex-direction: row;">
