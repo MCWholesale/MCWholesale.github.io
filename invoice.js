@@ -320,7 +320,7 @@ async function generatePDF() {
 
   const opt = {
   margin: [0.5, 0.5, 0.5, 0.5], // Adjust margins as needed
-  filename: 'stock.pdf',
+  filename: 'Current Current Stock.pdf',
   image: { type: 'jpeg', quality: 0.75 },
   html2canvas: { 
     scale: 2, 
@@ -373,7 +373,7 @@ async function sendEmails() {
         text_body: body,
         attachments: [
           {
-            filename: "Stock.pdf",
+            filename: "Current Stock.pdf",
             fileblob: base64PDF,
             mimetype: "application/pdf"
           }
