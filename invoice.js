@@ -374,7 +374,7 @@ async function sendEmails() {
     <p>Thank you for your continued partnership!</p>
     <p>Best regards,</p>
     <br>
-<img src="https://github.com/MCWholesale/MCWholesale.github.io/blob/main/email_body_end.png" alt="Company Info" style="width: 100%; height: auto;" />
+<img src="https://github.com/MCWholesale/MCWholesale.github.io/blob/main/email_body_end.png?raw=true" alt="Company Info" style="width: 100%; height: auto;" />
   `;
   
 
