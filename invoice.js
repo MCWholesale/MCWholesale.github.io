@@ -334,7 +334,7 @@ async function generatePDF() {
     windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
     windowHeight: document.body.scrollHeight  // Ensure full-height rendering
   },
-  jsPDF: { unit: 'px', format: [document.body.scrollWidth, document.body.scrollHeight], orientation: 'portrait' }
+  jsPDF: { unit: 'px', format:'auto', orientation: 'portrait' }
 };
 
   const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
