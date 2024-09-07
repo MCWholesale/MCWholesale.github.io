@@ -265,8 +265,13 @@ function retryLoadingImages(items, imageLoadStatus, tokenInfo) {
 function getImageUrl(description) {
   const baseUrl = 'https://raw.githubusercontent.com/MCWholesale/MCWholesale.github.io/main/MCWHOLESALE_PHOTOS/';
   
-  let encodedDescription = encodeURIComponent(description);
+  // Append "Monaco Chain" to the description
+  let descriptionWithBrand = `Monaco Chain ${description}`;
+  
+  // Encode the updated description for URL usage
+  let encodedDescription = encodeURIComponent(descriptionWithBrand);
 
+  // Replace any problematic encoding if needed
   encodedDescription = encodedDescription.replace(/%C3%A9/g, 'e%CC%81');
 
   return `${baseUrl}${encodedDescription}.png`;
