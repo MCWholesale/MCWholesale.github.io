@@ -42,8 +42,8 @@
       </div>
       <template v-if="invoice">
         <div class="top">
-          <div class="supplier" style="text-align: left;" >
-            <img style="margin-left: -4%; margin-bottom: 2%;" src="mc-log.png" width="250" />
+          <div class="supplier" style="text-align: center;" >
+            <img style="margin-bottom: 2%;" src="mc-log.png" width="250" />
             <div v-for="business in (invoice.Invoicer ? [invoice.Invoicer] : [])" style=" display: flex;flex-direction: column; gap:5px;">
               <template v-if="typeof(business) === 'string'">
                 <div class="address newlined">{{ business }}</div>
@@ -61,8 +61,8 @@
             </div>
           </div>
           <div class="block">
-            <div style="margin-top: 64px;">
-              <div class="info"><span style="font-weight:bold; font-size:20px;">CURRENT STOCK</span></div>
+            <div style="margin-top: 18px;">
+              <div class="info"><span style="font-weight:bold; font-size:30px;">CURRENT STOCK</span></div>
             </div>
           </div>
         </div>

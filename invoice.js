@@ -366,8 +366,17 @@ async function sendEmails() {
 
     const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
     const apiKey = data.invoice.key;
-    const subject = 'Monaco Chain Wholesale Current Stock';
-    const body = 'Here is our current Stock Inventory. If you want to order, please contact us.';
+    const subject = 'Updated Inventory';
+    const body = `
+    <p>Please see the attached PDF of our current inventory. Orders from this inventory can be delivered as soon as the next day.</p>
+    <p>Alternatively, you can place a custom order directly through monacochainwholesale.com, however please note that custom orders typically take 3 - 4 weeks to be delivered.</p>
+    <p>Feel free to reach out if you have any questions or need further assistance.</p>
+    <p>Thank you for your continued partnership!</p>
+    <p>Best regards,</p>
+    <br>
+    <img src="https://github.com/MCWholesale/MCWholesale.github.io/raw/main/email_body_info.png" alt="Company Info" width="250" height="auto"/>
+  `;
+  
 
     const emailPromises = data.invoice.Emails.map(async (email) => {
       const emailData = {
