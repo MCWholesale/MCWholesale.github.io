@@ -345,7 +345,7 @@ async function generatePDF() {
       windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
       windowHeight: windowHeight  // Limit the rendering to the last element
     },
-    jsPDF: { unit: 'px', format: 'auto', orientation: 'portrait' }
+    jsPDF: { unit: 'px', format: [document.body.scrollWidth, windowHeight], orientation: 'portrait' }
   };
 
   // Generate the PDF and get it as a Blob
