@@ -317,26 +317,38 @@ function updateHTMLWithBase64Images(invoice) {
 
 async function generatePDF() {
   // Hide the buttons initially
-  // Hide progress-related elements before PDF generation
   document.querySelectorAll('.print').forEach(button => button.classList.add('hidden'));
 
-  await embedImagesAsBase64(data.invoice);  // Convert images to Base64
-  updateHTMLWithBase64Images(data.invoice);  // Embed images in the HTML
+  // Embed images as Base64 before generating the PDF
+  await embedImagesAsBase64(data.invoice);
+  updateHTMLWithBase64Images(data.invoice);
 
+  // Get the position of the last element
+  const lastElement = document.getElementById('last_element');
+  let windowHeight2 = document.body.scrollHeight; // Default to full height of the body
+
+  // If the last element is found, set the height to the bottom of that element
+  if (lastElement) {
+    const rect = lastElement.getBoundingClientRect();
+    windowHeight2 = rect.bottom + window.scrollY; // Bottom position of last element relative to the page
+  }
+
+  // Set the options for html2pdf
   const opt = {
-  margin: [2, 2, 2, 2], // Adjust margins as needed
-  filename: 'Current Current Stock.pdf',
-  image: { type: 'jpeg', quality: 0.75 },
-  html2canvas: { 
-    scale: 2, 
-    useCORS: true, 
-    logging: true, 
-    windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
-    windowHeight: document.body.scrollHeight  // Ensure full-height rendering
-  },
-  jsPDF: { unit: 'px', format:'auto', orientation: 'portrait' }
-};
+    margin: [2, 2, 2, 2], // Adjust margins as needed
+    filename: 'Current Stock.pdf',
+    image: { type: 'jpeg', quality: 0.75 },
+    html2canvas: { 
+      scale: 2, 
+      useCORS: true, 
+      logging: true,
+      windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
+      windowHeight: windowHeight2  // Limit the rendering to the last element
+    },
+    jsPDF: { unit: 'px', format: 'auto', orientation: 'portrait' }
+  };
 
+  // Generate the PDF and get it as a Blob
   const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
 
   // Convert PDF Blob to base64
