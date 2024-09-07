@@ -474,3 +474,19 @@ tfoot td {
   border-top: 1px solid #000;
   padding-top: 10px;
 }
+
+
+html, body {
+  height: auto !important;
+  page-break-inside: avoid !important;
+}
+
+@media print {
+body, html {
+  page-break-after: avoid;
+}
+}
+
+.page-break {
+  display: none; /* Remove the break completely */
+}
