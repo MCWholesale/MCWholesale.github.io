@@ -477,16 +477,23 @@ tfoot td {
 
 
 html, body {
-  height: auto !important;
+  height: auto;
   page-break-inside: avoid !important;
 }
 
 @media print {
-body, html {
-  page-break-after: avoid;
-}
+  body, html {
+      page-break-after: avoid;
+      height: auto;
+  }
 }
 
 .page-break {
-  display: none; /* Remove the break completely */
+  display: none;
+}
+
+/* For tables and images */
+table, img, div {
+  page-break-inside: avoid;
+  page-break-after: auto;
 }
