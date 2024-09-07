@@ -317,7 +317,6 @@ function updateHTMLWithBase64Images(invoice) {
 
 async function generatePDF() {
   // Hide the buttons initially
-  document.querySelectorAll('.print').forEach(button => button.classList.add('hidden'));
   document.querySelectorAll('.print, #progress-bar').forEach(el => {
     el.style.display = 'none';
   });
@@ -434,7 +433,9 @@ async function sendEmails() {
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
   } finally {
-    document.querySelectorAll('.print').forEach(button => button.classList.remove('hidden'));
+    document.querySelectorAll('.print, #progress-bar').forEach(el => {
+      el.style.display = 'block';
+    });
   }
 }
 
