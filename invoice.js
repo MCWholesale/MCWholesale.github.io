@@ -324,7 +324,7 @@ async function generatePDF() {
   updateHTMLWithBase64Images(data.invoice);  // Embed images in the HTML
 
   const opt = {
-  margin: [0.5, 0.5, 0.5, 0.5], // Adjust margins as needed
+  margin: [2, 2, 2, 2], // Adjust margins as needed
   filename: 'Current Current Stock.pdf',
   image: { type: 'jpeg', quality: 0.75 },
   html2canvas: { 
