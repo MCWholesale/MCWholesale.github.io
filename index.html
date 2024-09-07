@@ -91,10 +91,11 @@
               <th style="font-weight: bold;">TYPE</th>
               <th style="font-weight: bold;" class="number">PCS</th>
               <th style="font-weight: bold;" class="number">WEIGHT (GR)</th>  
-              <th style="font-weight: bold;" class="number">LABOR/GR</th>
-              <th  style="font-weight: bold; font-size: 11px;" class="money">LABOR</th>
-              <th  style="font-weight: bold; font-size: 11px;" class="money">SPOT GOLD</th>
-              <th  style="font-weight: bold; font-size: 11px;" class="money">SPOT TOTAL</th>
+              <th style="font-weight: bold;" class="number">ESTIMATED WEIGHT/PC</th>              
+
+
+
+
               
             </tr>
             <tr v-for="(item, index) in invoice.Items">
@@ -113,10 +114,7 @@
               <td class="item-t" id="type">{{ item.Type }}</td>
               <td class="number">{{ item.Balance_Qty }}</td>
               <td class="money">{{ item.Balance_Weight }}</td>
-              <td class="money">{{ item.Sold_Labor_Gr | currency }}</td>
-              <td class="money">{{ item.Sold_Labor_Total | currency }}</td>
-              <td class="money">{{ item.Spot_Gold | currency }}</td>
-              <td class="money">{{ item.Spot_Gold_Labor_Duty | currency }}</td>
+              <td class="money">{{ item.Estimated_Weight_Pc }}</td>
             </tr>
           </template>
         </table>
