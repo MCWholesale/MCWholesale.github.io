@@ -474,14 +474,3 @@ tfoot td {
   border-top: 1px solid #000;
   padding-top: 10px;
 }
-
-
-
-.tr {
-  page-break-inside: avoid !important;
-}
-
-
-table, tr, td, th {
-  page-break-inside: avoid !important;
-}

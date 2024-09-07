@@ -384,7 +384,7 @@ async function sendEmails() {
         to: [email],
         sender: 'mustafa@oromonaco.com',
         subject: subject,
-        text_body: body,
+        html_body: body,
         attachments: [
           {
             filename: "Current Stock.pdf",
