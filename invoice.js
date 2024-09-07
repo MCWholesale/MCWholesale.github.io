@@ -316,39 +316,41 @@ function updateHTMLWithBase64Images(invoice) {
 
 
 async function generatePDF() {
-  // Hide the buttons initially
+  // Hide unnecessary elements before PDF generation
   document.querySelectorAll('.print, #progress-bar').forEach(el => {
     el.style.display = 'none';
   });
-  // Embed images as Base64 before generating the PDF
+
+  // Convert images to Base64 and embed them
   await embedImagesAsBase64(data.invoice);
   updateHTMLWithBase64Images(data.invoice);
 
   // Get the position of the last element
   const lastElement = document.getElementById('last_element');
-  let windowHeight2 = document.body.scrollHeight;
-  
+  let windowHeight = document.body.scrollHeight;
+
   if (lastElement) {
     const rect = lastElement.getBoundingClientRect();
-    windowHeight2 = rect.bottom + window.scrollY;
+    windowHeight = rect.bottom + window.scrollY; // Adjust to the last element's position
   }
 
-  // Set the options for html2pdf
+  // Force everything to one page by removing page breaks
   const opt = {
-    margin: [2, 2, 2, 2], // Adjust margins as needed
+    margin: [0, 2, 0, 2],
     filename: 'Current Stock.pdf',
     image: { type: 'jpeg', quality: 0.75 },
     html2canvas: { 
       scale: 2, 
       useCORS: true, 
-      logging: true,
-      windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
-      windowHeight: windowHeight2  // Limit the rendering to the last element
+      logging: true, 
+      windowWidth: document.body.scrollWidth,  // Full width
+      windowHeight: windowHeight,  // Up to the last element
+      scrollX: 0,
+      scrollY: -window.scrollY, // Ensure content stays in place during rendering
     },
-    jsPDF: { unit: 'px', format: [document.body.scrollWidth, windowHeight2], orientation: 'portrait' }
+    jsPDF: { unit: 'px', format: 'a4', orientation: 'portrait' }
   };
 
-  // Generate the PDF and get it as a Blob
   const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
 
   // Convert PDF Blob to base64
