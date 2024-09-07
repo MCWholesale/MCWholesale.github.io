@@ -325,12 +325,12 @@ async function generatePDF() {
 
   // Get the position of the last element
   const lastElement = document.getElementById('last_element');
-  let windowHeight2 = document.body.scrollHeight; // Default to full height of the body
+  let windowHeight = document.body.scrollHeight; // Default to full height of the body
 
   // If the last element is found, set the height to the bottom of that element
   if (lastElement) {
     const rect = lastElement.getBoundingClientRect();
-    windowHeight2 = rect.bottom + window.scrollY; // Bottom position of last element relative to the page
+    windowHeight = rect.bottom + window.scrollY; // Bottom position of last element relative to the page
   }
 
   // Set the options for html2pdf
@@ -343,7 +343,7 @@ async function generatePDF() {
       useCORS: true, 
       logging: true,
       windowWidth: document.body.scrollWidth,  // Ensure full-width rendering
-      windowHeight: windowHeight2  // Limit the rendering to the last element
+      windowHeight: windowHeight  // Limit the rendering to the last element
     },
     jsPDF: { unit: 'px', format: 'auto', orientation: 'portrait' }
   };
