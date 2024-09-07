@@ -345,7 +345,7 @@ async function generatePDF() {
       logging: true, 
       windowWidth: document.body.scrollWidth,  // Full width
       windowHeight: windowHeight,  // Up to the last element
-      scrollX: windowWidth,
+      scrollX: document.body.scrollWidth,
       scrollY: -window.scrollY, // Ensure content stays in place during rendering
     },
     jsPDF: { unit: 'px', format: [document.body.scrollWidth, windowHeight], orientation: 'portrait' }
