@@ -375,20 +375,28 @@ async function sendEmails() {
     // Step 1: Generate the PDF
     const originalPDFBlob = await generatePDF();
 
-    // Step 2: Load the PDF using pdf-lib to manipulate it
-    const pdfBytes = await originalPDFBlob.arrayBuffer(); // Convert Blob to ArrayBuffer
-    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes); // Use PDFLib (from the CDN)
+    // Step 2: Convert Blob to ArrayBuffer using FileReader
+    const pdfBytes = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(originalPDFBlob);
+    });
 
-    // Step 3: Remove the first page
+    // Step 3: Load the PDF using pdf-lib to manipulate it
+    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+
+    // Step 4: Remove the first page
     const totalPages = pdfDoc.getPageCount();
     if (totalPages > 1) {
       pdfDoc.removePage(0); // Remove the first page
     }
 
-    // Step 4: Save the modified PDF
+    // Step 5: Save the modified PDF
     const modifiedPdfBytes = await pdfDoc.save();
     const base64PDF = btoa(String.fromCharCode(...new Uint8Array(modifiedPdfBytes))); // Convert to base64
 
+    // Sending email logic with base64PDF
     const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
     const apiKey = data.invoice.key;
     const subject = 'Updated Inventory';
@@ -436,7 +444,6 @@ async function sendEmails() {
     console.error("Error generating PDF or sending emails:", error);
   }
 }
-
 
 
 ready(function() {
