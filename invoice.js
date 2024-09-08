@@ -321,15 +321,6 @@ async function generatePDF() {
     el.style.display = 'none';
   });
 
-  // Get the progress bar element
-  const progressBar = document.getElementById('progress-bar');
-
-  // Store the parent node and the next sibling (to restore it later)
-  const progressBarParent = progressBar.parentNode;
-  const nextSibling = progressBar.nextSibling;
-
-  // Remove the progress bar from the DOM before PDF generation
-  progressBarParent.removeChild(progressBar);
 
   // Convert images to Base64 and embed them
   await embedImagesAsBase64(data.invoice);
@@ -374,12 +365,6 @@ async function generatePDF() {
     return pdf.output('blob');
   });
 
-  // Re-insert the progress bar back in its original location
-  if (nextSibling) {
-    progressBarParent.insertBefore(progressBar, nextSibling);
-  } else {
-    progressBarParent.appendChild(progressBar);
-  }
   document.querySelectorAll('.print').forEach(el => {
     el.style.display = 'block';
   });
