@@ -361,16 +361,16 @@ async function generatePDF() {
     jsPDF: { unit: 'px', format: [document.body.scrollWidth, windowHeight], orientation: 'portrait' ,compressPDF: true}
   };
   
-  const pdfBlob = await html2pdf()
-  .from(document.body)
+  const pdfBlob = await html2pdf().from(document.body)
   .set(opt)
   .toPdf()
   .get('pdf')
-  .then(function(pdf) {
-    while (pdf.getNumberOfPages() > 1) {
-      pdf.deletePage(pdf.getNumberOfPages());
+  .then(function (pdf) {
+    // Remove extra pages if more than 1
+    while (pdf.internal.getNumberOfPages() > 1) {
+      pdf.deletePage(pdf.internal.getNumberOfPages());
     }
-    // Convert to Blob
+    // Return the Blob for the modified PDF
     return pdf.output('blob');
   });
 
