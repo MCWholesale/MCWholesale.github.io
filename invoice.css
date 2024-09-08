@@ -5,6 +5,10 @@ body {
   padding: 5px;
 }
 
+body, html {
+  overflow: hidden;
+  max-height: 100%;
+}
 .meta {
   color: black;
 }
@@ -473,27 +477,4 @@ tfoot td {
   font-weight: bold;
   border-top: 1px solid #000;
   padding-top: 10px;
-}
-
-
-html, body {
-  height: auto;
-  page-break-inside: avoid !important;
-}
-
-@media print {
-  body, html {
-      page-break-after: avoid;
-      height: auto;
-  }
-}
-
-.page-break {
-  display: none;
-}
-
-/* For tables and images */
-table, img, div {
-  page-break-inside: avoid;
-  page-break-after: auto;
 }
