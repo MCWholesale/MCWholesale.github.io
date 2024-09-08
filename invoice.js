@@ -316,14 +316,15 @@ function updateHTMLWithBase64Images(invoice) {
 
 
 async function generatePDF() {
-  // Hide unnecessary elements before PDF generation
-  document.querySelectorAll('.print').forEach(el => {
-    el.style.display = 'none';
-  });
+  // Get the progress bar element
   const progressBar = document.getElementById('progress-bar');
-  if (progressBar) {
-    progressBar.remove();
-  }
+
+  // Store the parent node and the next sibling (to restore it later)
+  const progressBarParent = progressBar.parentNode;
+  const nextSibling = progressBar.nextSibling;
+
+  // Remove the progress bar from the DOM before PDF generation
+  progressBarParent.removeChild(progressBar);
 
   // Convert images to Base64 and embed them
   await embedImagesAsBase64(data.invoice);
@@ -356,7 +357,14 @@ async function generatePDF() {
   };
 
   const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
-  document.body.appendChild(progressBar);
+
+  // Re-insert the progress bar back in its original location
+  if (nextSibling) {
+    progressBarParent.insertBefore(progressBar, nextSibling);
+  } else {
+    progressBarParent.appendChild(progressBar);
+  }
+
   // Convert PDF Blob to base64
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -365,7 +373,6 @@ async function generatePDF() {
     reader.onerror = reject;
   });
 }
-
 
 async function sendEmails() {
   try {
