@@ -316,6 +316,11 @@ function updateHTMLWithBase64Images(invoice) {
 
 
 async function generatePDF() {
+
+  document.querySelectorAll('.print').forEach(el => {
+    el.style.display = 'none';
+  });
+
   // Get the progress bar element
   const progressBar = document.getElementById('progress-bar');
 
@@ -364,7 +369,9 @@ async function generatePDF() {
   } else {
     progressBarParent.appendChild(progressBar);
   }
-
+  document.querySelectorAll('.print').forEach(el => {
+    el.style.display = 'block';
+  });
   // Convert PDF Blob to base64
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
