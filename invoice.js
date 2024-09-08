@@ -350,7 +350,7 @@ async function generatePDF() {
     filename: 'Current Stock.pdf',
     image: { type: 'jpeg', quality: 0.75 },
     html2canvas: { 
-      scale: 2, 
+      scale: 1, 
       useCORS: true, 
       logging: true, 
       windowWidth: document.body.scrollWidth,  // Full width
