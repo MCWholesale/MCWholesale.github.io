@@ -372,25 +372,33 @@ async function sendEmails() {
     progressBar.setAttribute('data-label', `Email sending 0/${totalEmails}`);
     progressBar.value = 0;
 
-    const base64PDF = await generatePDF();
+    // Step 1: Generate the PDF
+    const originalPDFBlob = await generatePDF();
 
-    if (!base64PDF) {
-      throw new Error("Failed to generate the PDF or convert it to base64.");
+    // Step 2: Load the PDF using pdf-lib to manipulate it
+    const pdfBytes = await originalPDFBlob.arrayBuffer(); // Convert Blob to ArrayBuffer
+    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes); // Use PDFLib (from the CDN)
+
+    // Step 3: Remove the first page
+    const totalPages = pdfDoc.getPageCount();
+    if (totalPages > 1) {
+      pdfDoc.removePage(0); // Remove the first page
     }
+
+    // Step 4: Save the modified PDF
+    const modifiedPdfBytes = await pdfDoc.save();
+    const base64PDF = btoa(String.fromCharCode(...new Uint8Array(modifiedPdfBytes))); // Convert to base64
 
     const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
     const apiKey = data.invoice.key;
     const subject = 'Updated Inventory';
     const body = `
-    <p>Please see the attached PDF of our current inventory. Orders from this inventory can be delivered as soon as the next day.</p>
-    <p>Alternatively, you can place a custom order directly through monacochainwholesale.com, however please note that custom orders typically take 3 - 4 weeks to be delivered.</p>
-    <p>Feel free to reach out if you have any questions or need further assistance.</p>
-    <p>Thank you for your continued partnership!</p>
-    <p>Best regards,</p>
-    <br>
-<img src="https://github.com/MCWholesale/MCWholesale.github.io/blob/main/email_body_end.png?raw=true" alt="Company Info" style="width: 100%; height: auto;" />
-  `;
-  
+      <p>Please see the attached PDF of our current inventory. Orders from this inventory can be delivered as soon as the next day.</p>
+      <p>Feel free to reach out if you have any questions or need further assistance.</p>
+      <p>Best regards,</p>
+      <br>
+      <img src="https://github.com/MCWholesale/MCWholesale.github.io/blob/main/email_body_end.png?raw=true" alt="Company Info" style="width: 100%; height: auto;" />
+    `;
 
     const emailPromises = data.invoice.Emails.map(async (email) => {
       const emailData = {
@@ -421,23 +429,11 @@ async function sendEmails() {
       }
     });
 
-    await Promise.all(emailPromises);  // Send all emails in parallel
+    await Promise.all(emailPromises);
 
     progressBar.setAttribute('data-label', "COMPLETED");
-
-    // Update the Last_Sent field in Grist using applyUserActions
-    const dateValue = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss');
-    await grist.docApi.applyUserActions([
-      ['UpdateRecord', 'Stock_Balance_Report', data.invoice.record_id, { Last_Sent: dateValue }]
-    ]);
-
-    console.log('Last Sent Date updated successfully');
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
-  } finally {
-    document.querySelectorAll('.print').forEach(el => {
-      el.style.display = 'block';
-    });
   }
 }
 
