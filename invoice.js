@@ -350,7 +350,7 @@ async function generatePDF() {
     filename: 'Current Stock.pdf',
     image: { type: 'jpeg', quality: 0.75 },
     html2canvas: { 
-      scale: 1, 
+      scale: 2, 
       useCORS: true, 
       logging: true, 
       windowWidth: document.body.scrollWidth,  // Full width
@@ -358,10 +358,21 @@ async function generatePDF() {
       scrollX: document.body.scrollWidth,
       scrollY: -window.scrollY, // Ensure content stays in place during rendering
     },
-    jsPDF: { unit: 'px', format: [document.body.scrollWidth, windowHeight], orientation: 'portrait' }
+    jsPDF: { unit: 'px', format: [document.body.scrollWidth, windowHeight], orientation: 'portrait' ,compressPDF: true}
   };
-
-  const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
+  
+  const pdfBlob = await html2pdf()
+  .from(document.body)
+  .set(opt)
+  .toPdf()
+  .get('pdf')
+  .then(function(pdf) {
+    while (pdf.getNumberOfPages() > 1) {
+      pdf.deletePage(pdf.getNumberOfPages());
+    }
+    // Convert to Blob
+    return pdf.output('blob');
+  });
 
   // Re-insert the progress bar back in its original location
   if (nextSibling) {
