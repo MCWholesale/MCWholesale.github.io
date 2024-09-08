@@ -320,6 +320,10 @@ async function generatePDF() {
   document.querySelectorAll('.print').forEach(el => {
     el.style.display = 'none';
   });
+  const progressBar = document.getElementById('progress-bar');
+  if (progressBar) {
+    progressBar.remove();
+  }
 
   // Convert images to Base64 and embed them
   await embedImagesAsBase64(data.invoice);
@@ -352,7 +356,7 @@ async function generatePDF() {
   };
 
   const pdfBlob = await html2pdf().from(document.body).set(opt).outputPdf('blob');
-
+  document.body.appendChild(progressBar);
   // Convert PDF Blob to base64
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -372,41 +376,25 @@ async function sendEmails() {
     progressBar.setAttribute('data-label', `Email sending 0/${totalEmails}`);
     progressBar.value = 0;
 
-    // Step 1: Generate the PDF
-    const originalPDFBlob = await generatePDF();
+    const base64PDF = await generatePDF();
 
-    // Step 2: Convert Blob to ArrayBuffer using FileReader
-    const pdfBytes = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsArrayBuffer(originalPDFBlob);
-    });
-
-    // Step 3: Load the PDF using pdf-lib to manipulate it
-    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-
-    // Step 4: Remove the first page
-    const totalPages = pdfDoc.getPageCount();
-    if (totalPages > 1) {
-      pdfDoc.removePage(0); // Remove the first page
+    if (!base64PDF) {
+      throw new Error("Failed to generate the PDF or convert it to base64.");
     }
 
-    // Step 5: Save the modified PDF
-    const modifiedPdfBytes = await pdfDoc.save();
-    const base64PDF = btoa(String.fromCharCode(...new Uint8Array(modifiedPdfBytes))); // Convert to base64
-
-    // Sending email logic with base64PDF
     const smpt2goApiUrl = 'https://api.smtp2go.com/v3/email/send';
     const apiKey = data.invoice.key;
     const subject = 'Updated Inventory';
     const body = `
-      <p>Please see the attached PDF of our current inventory. Orders from this inventory can be delivered as soon as the next day.</p>
-      <p>Feel free to reach out if you have any questions or need further assistance.</p>
-      <p>Best regards,</p>
-      <br>
-      <img src="https://github.com/MCWholesale/MCWholesale.github.io/blob/main/email_body_end.png?raw=true" alt="Company Info" style="width: 100%; height: auto;" />
-    `;
+    <p>Please see the attached PDF of our current inventory. Orders from this inventory can be delivered as soon as the next day.</p>
+    <p>Alternatively, you can place a custom order directly through monacochainwholesale.com, however please note that custom orders typically take 3 - 4 weeks to be delivered.</p>
+    <p>Feel free to reach out if you have any questions or need further assistance.</p>
+    <p>Thank you for your continued partnership!</p>
+    <p>Best regards,</p>
+    <br>
+<img src="https://github.com/MCWholesale/MCWholesale.github.io/blob/main/email_body_end.png?raw=true" alt="Company Info" style="width: 100%; height: auto;" />
+  `;
+  
 
     const emailPromises = data.invoice.Emails.map(async (email) => {
       const emailData = {
@@ -437,13 +425,26 @@ async function sendEmails() {
       }
     });
 
-    await Promise.all(emailPromises);
+    await Promise.all(emailPromises);  // Send all emails in parallel
 
     progressBar.setAttribute('data-label', "COMPLETED");
+
+    // Update the Last_Sent field in Grist using applyUserActions
+    const dateValue = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss');
+    await grist.docApi.applyUserActions([
+      ['UpdateRecord', 'Stock_Balance_Report', data.invoice.record_id, { Last_Sent: dateValue }]
+    ]);
+
+    console.log('Last Sent Date updated successfully');
   } catch (error) {
     console.error("Error generating PDF or sending emails:", error);
+  } finally {
+    document.querySelectorAll('.print').forEach(el => {
+      el.style.display = 'block';
+    });
   }
 }
+
 
 
 ready(function() {
