@@ -102,7 +102,14 @@
             </tr>
             <tr v-for="(item, index) in invoice.Items">
               <td class="img" style="padding:4px;">
-                <img :class="'img-' + index" :style="item.Type === 'Ring' || item.Type === 'Earring' ? 'height: 110px;' : ''" />
+                <img 
+                    :class="'img-' + index" 
+                    :style="item.Type === 'Cuff' 
+                      ? 'width: 120px; height: 120px;' 
+                      : (item.Type === 'Ring' || item.Type === 'Earring' 
+                         ? 'height: 110px;' 
+                         : '')" 
+                  />
                 <td class="number" :style="{'background-color': getBackgroundColor(item.Metal)}">
                   {{ item.Metal }}
                 </td>
