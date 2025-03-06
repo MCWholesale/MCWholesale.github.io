@@ -82,11 +82,12 @@ Vue.filter('round', function (value) {
   return value.toFixed(2);
 });
 
-Vue.filter('fallback', function(value, str) {
-  if (!value) {
-    throw new Error("Please provide column " + str);
+Vue.filter('asDateM', function(value) {
+  if (typeof value === 'number') {
+    value = new Date(value * 1000); // Convert Unix timestamp (seconds) to Date object
   }
-  return value;
+  const date = moment.tz(value, 'America/New_York'); // Keep it in ET
+  return date.isValid() ? date.format('MM/DD/YY') : value;
 });
 
 Vue.filter('asDate', function(value) {
