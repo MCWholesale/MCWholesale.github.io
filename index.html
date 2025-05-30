@@ -114,7 +114,7 @@
                   {{ item.Metal }}
                 </td>
               <td class="item-t" style="padding:5px;">{{ item.Description }}  <br><br>
-                <small v-if="item.Type === 'Ring'" style="font-size: 12px; font-weight: bold;">
+                <small v-if="item.Type === 'Ring' || item.Description.includes('HOOP')" style="font-size: 12px; font-weight: bold;">
                   {{ item.options }}
                 </small>
                 <small v-else-if="item.Type !== 'Ring' && item.Type !== 'Earring'" style="font-size: 12px; font-weight: bold;">
